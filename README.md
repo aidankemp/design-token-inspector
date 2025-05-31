@@ -1,4 +1,6 @@
-# token-inspector
+# design-token-inspector
+
+[![NPM Version](https://img.shields.io/npm/v/design-token-inspector)](https://www.npmjs.com/package/design-token-inspector)
 
 UI components designed for inspecting, modifying and saving design token values on a live application, built with React and Ant Design.
 
