@@ -1,0 +1,11 @@
+# token-inspector
+
+UI components designed for inspecting, modifying and saving design token values on a live application, built with React and Ant Design.
+
+This package includes:
+
+- `TokenInspector`: Shows all the design tokens used in a section of the UI while hovering over it. The tokens can be modified, saved, and exported in a Style Dictionary format.
+
+## License
+
+[MIT Licence](LICENSE.md)
