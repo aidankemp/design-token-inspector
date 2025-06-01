@@ -1,13 +1,884 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + React + TS</title>
+    <title>Metropolitan Theater Company</title>
+    <style>
+      :root {
+        /* Colors */
+        --primary-color: #e94560;
+        --secondary-color: #f27121;
+        --accent-color: #a663cc;
+        --bg-primary: #0a0a0a;
+        --bg-secondary: #1a1a2e;
+        --bg-tertiary: #16213e;
+        --bg-section: #0f0f23;
+        --text-primary: #333;
+        --text-light: #fff;
+        --text-muted: #ccc;
+        --text-subtle: #888;
+        --border-color: rgba(255, 255, 255, 0.1);
+        --overlay-light: rgba(255, 255, 255, 0.05);
+        --overlay-medium: rgba(255, 255, 255, 0.08);
+
+        /* Gradients */
+        --gradient-primary: linear-gradient(
+          45deg,
+          var(--primary-color),
+          var(--secondary-color)
+        );
+        --gradient-full: linear-gradient(
+          45deg,
+          var(--primary-color),
+          var(--secondary-color),
+          var(--accent-color)
+        );
+        --gradient-bg-primary: linear-gradient(
+          135deg,
+          var(--bg-secondary),
+          var(--bg-tertiary)
+        );
+        --gradient-bg-section: linear-gradient(
+          135deg,
+          var(--bg-section),
+          var(--bg-secondary)
+        );
+
+        /* Spacing */
+        --spacing-xs: 0.5rem;
+        --spacing-sm: 1rem;
+        --spacing-md: 1.5rem;
+        --spacing-lg: 2rem;
+        --spacing-xl: 3rem;
+        --spacing-xxl: 5rem;
+
+        /* Border Radius */
+        --radius-sm: 10px;
+        --radius-md: 15px;
+        --radius-lg: 20px;
+        --radius-xl: 25px;
+        --radius-round: 50px;
+
+        /* Font Sizes */
+        --font-xs: 1.1rem;
+        --font-sm: 1.2rem;
+        --font-md: 1.3rem;
+        --font-lg: 1.4rem;
+        --font-xl: 1.8rem;
+        --font-xxl: 2.5rem;
+        --font-hero: 3.5rem;
+        --font-icon: 3rem;
+
+        /* Font Weights */
+        --weight-normal: 600;
+        --weight-bold: bold;
+
+        /* Transitions */
+        --transition-fast: all 0.3s ease;
+
+        /* Shadows */
+        --shadow-sm: 0 10px 20px rgba(233, 69, 96, 0.3);
+        --shadow-md: 0 15px 30px rgba(233, 69, 96, 0.4);
+        --shadow-lg: 0 20px 40px rgba(233, 69, 96, 0.2);
+
+        /* Line Height */
+        --line-height-base: 1.6;
+        --line-height-relaxed: 1.8;
+
+        /* Z-Index */
+        --z-header: 1000;
+
+        /* Dimensions */
+        --header-height: 80px;
+        --hero-height: 80vh;
+        --card-image-height: 200px;
+        --max-width: 1200px;
+        --border-width: 1px;
+        --border-width-thick: 3px;
+        --decoration-width: 100px;
+
+        --hero-bg-image: url("https://images.unsplash.com/photo-1571173069043-82a7a13cee9f?q=80&w=3270&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        line-height: var(--line-height-base);
+        color: var(--text-primary);
+        background-color: var(--bg-primary);
+      }
+
+      /* Header */
+      header {
+        background: var(--gradient-bg-primary);
+        padding: var(--spacing-sm) 0;
+        position: fixed;
+        width: 100%;
+        top: 0;
+        z-index: var(--z-header);
+        backdrop-filter: blur(10px);
+        border-bottom: var(--border-width) solid var(--border-color);
+      }
+
+      nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        max-width: var(--max-width);
+        margin: 0 auto;
+        padding: 0 var(--spacing-lg);
+      }
+
+      .logo {
+        font-size: var(--font-xl);
+        font-weight: var(--weight-bold);
+        color: var(--primary-color);
+        text-decoration: none;
+      }
+
+      .nav-links {
+        display: flex;
+        list-style: none;
+        gap: var(--spacing-lg);
+      }
+
+      .nav-links a {
+        color: var(--text-light);
+        text-decoration: none;
+        transition: var(--transition-fast);
+        padding: var(--spacing-xs) var(--spacing-sm);
+        border-radius: var(--radius-xl);
+      }
+
+      .nav-links a:hover {
+        background: rgba(233, 69, 96, 0.2);
+        color: var(--primary-color);
+        transform: translateY(-2px);
+      }
+
+      .cart-btn {
+        background: var(--gradient-primary);
+        padding: 0.8rem var(--spacing-md);
+        border-radius: var(--radius-xl);
+        color: var(--text-light);
+        text-decoration: none;
+        transition: var(--transition-fast);
+        font-weight: var(--weight-normal);
+      }
+
+      .cart-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-sm);
+      }
+
+      /* Main Content */
+      main {
+        margin-top: var(--header-height);
+      }
+
+      /* Hero Section */
+      .hero {
+        background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.4)),
+          var(--hero-bg-image);
+        background-size: cover;
+        background-position: center;
+        height: var(--hero-height);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        color: var(--text-light);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .hero-content {
+        max-width: 800px;
+        padding: var(--spacing-lg);
+        animation: fadeInUp 1s ease;
+      }
+
+      .hero h1 {
+        font-size: var(--font-hero);
+        margin-bottom: var(--spacing-sm);
+        background: var(--gradient-full);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .hero p {
+        font-size: var(--font-md);
+        margin-bottom: var(--spacing-lg);
+        opacity: 0.9;
+      }
+
+      .cta-button {
+        display: inline-block;
+        background: var(--gradient-primary);
+        padding: var(--spacing-sm) var(--spacing-lg);
+        color: var(--text-light);
+        text-decoration: none;
+        border-radius: var(--radius-round);
+        font-weight: var(--weight-normal);
+        transition: var(--transition-fast);
+        font-size: var(--font-xs);
+      }
+
+      .cta-button:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-md);
+      }
+
+      /* Shows Section */
+      .shows {
+        padding: var(--spacing-xxl) var(--spacing-lg);
+        max-width: var(--max-width);
+        margin: 0 auto;
+      }
+
+      .section-title {
+        text-align: center;
+        font-size: var(--font-xxl);
+        margin-bottom: var(--spacing-xl);
+        color: var(--text-light);
+        position: relative;
+      }
+
+      .section-title::after {
+        content: "";
+        display: block;
+        width: var(--decoration-width);
+        height: var(--border-width-thick);
+        background: var(--gradient-primary);
+        margin: var(--spacing-sm) auto;
+        border-radius: 2px;
+      }
+
+      .shows-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: var(--spacing-lg);
+      }
+
+      .show-card {
+        background: var(--gradient-bg-primary);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        transition: var(--transition-fast);
+        border: var(--border-width) solid var(--border-color);
+      }
+
+      .show-card:hover {
+        transform: translateY(-10px);
+        box-shadow: var(--shadow-lg);
+      }
+
+      .show-image {
+        height: var(--card-image-height);
+        background: var(--gradient-full);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: var(--font-icon);
+        color: var(--text-light);
+      }
+
+      .show-content {
+        padding: var(--spacing-md);
+      }
+
+      .show-content h3 {
+        color: var(--primary-color);
+        margin-bottom: var(--spacing-xs);
+        font-size: var(--font-lg);
+      }
+
+      .show-content p {
+        color: var(--text-muted);
+        margin-bottom: var(--spacing-sm);
+      }
+
+      .show-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: var(--spacing-sm);
+      }
+
+      .show-date {
+        color: var(--secondary-color);
+        font-weight: var(--weight-normal);
+      }
+
+      .show-price {
+        color: var(--accent-color);
+        font-size: var(--font-sm);
+        font-weight: var(--weight-bold);
+      }
+
+      .buy-ticket-btn {
+        width: 100%;
+        background: var(--gradient-primary);
+        color: var(--text-light);
+        border: none;
+        padding: 0.8rem;
+        border-radius: var(--radius-sm);
+        font-weight: var(--weight-normal);
+        cursor: pointer;
+        transition: var(--transition-fast);
+      }
+
+      .buy-ticket-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-sm);
+      }
+
+      /* About Us Section */
+      .about-us {
+        background: var(--gradient-bg-section);
+        padding: var(--spacing-xxl) var(--spacing-lg);
+      }
+
+      .about-us-container {
+        max-width: var(--max-width);
+        margin: 0 auto;
+      }
+
+      .about-us-content {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--spacing-xxl);
+        align-items: center;
+      }
+
+      .about-us-text {
+        color: var(--text-muted);
+      }
+
+      .about-us-text h2 {
+        color: var(--text-light);
+        font-size: var(--font-xxl);
+        margin-bottom: var(--spacing-lg);
+        position: relative;
+      }
+
+      .about-us-text h2::after {
+        content: "";
+        display: block;
+        width: var(--decoration-width);
+        height: var(--border-width-thick);
+        background: var(--gradient-primary);
+        margin: var(--spacing-sm) 0;
+        border-radius: 2px;
+      }
+
+      .about-us-text p {
+        font-size: var(--font-xs);
+        line-height: var(--line-height-relaxed);
+        margin-bottom: var(--spacing-md);
+      }
+
+      .about-us-stats {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-lg);
+        margin-top: var(--spacing-lg);
+      }
+
+      .stat-item {
+        text-align: center;
+        padding: var(--spacing-md);
+        background: var(--overlay-light);
+        border-radius: var(--radius-md);
+        border: var(--border-width) solid var(--border-color);
+      }
+
+      .stat-number {
+        font-size: var(--font-xl);
+        font-weight: var(--weight-bold);
+        color: var(--primary-color);
+        display: block;
+      }
+
+      .stat-label {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        margin-top: var(--spacing-xs);
+      }
+
+      .about-us-image {
+        position: relative;
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        height: 400px;
+        background: linear-gradient(
+          45deg,
+          var(--primary-color),
+          var(--secondary-color),
+          var(--accent-color)
+        );
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 4rem;
+        color: var(--text-light);
+        box-shadow: var(--shadow-lg);
+      }
+
+      /* Merchandise Section */
+      .merchandise {
+        background: var(--gradient-bg-section);
+        padding: var(--spacing-xxl) var(--spacing-lg);
+      }
+
+      .merch-container {
+        max-width: var(--max-width);
+        margin: 0 auto;
+      }
+
+      .merch-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: var(--spacing-lg);
+      }
+
+      .merch-card {
+        background: var(--overlay-light);
+        border-radius: var(--radius-md);
+        padding: var(--spacing-md);
+        text-align: center;
+        transition: var(--transition-fast);
+        border: var(--border-width) solid var(--border-color);
+      }
+
+      .merch-card:hover {
+        transform: translateY(-5px);
+        background: var(--overlay-medium);
+      }
+
+      .merch-icon {
+        font-size: var(--font-icon);
+        margin-bottom: var(--spacing-sm);
+        background: var(--gradient-primary);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .merch-card h3 {
+        color: var(--text-light);
+        margin-bottom: var(--spacing-xs);
+      }
+
+      .merch-card p {
+        color: var(--text-muted);
+        margin-bottom: var(--spacing-sm);
+      }
+
+      .merch-price {
+        color: var(--accent-color);
+        font-size: var(--font-md);
+        font-weight: var(--weight-bold);
+        margin-bottom: var(--spacing-sm);
+      }
+
+      /* About Section */
+      .about {
+        padding: var(--spacing-xxl) var(--spacing-lg);
+        max-width: var(--max-width);
+        margin: 0 auto;
+        text-align: center;
+      }
+
+      .about p {
+        font-size: var(--font-sm);
+        color: var(--text-muted);
+        max-width: 800px;
+        margin: 0 auto;
+        line-height: var(--line-height-relaxed);
+      }
+
+      /* Footer */
+      footer {
+        background: var(--gradient-bg-primary);
+        padding: var(--spacing-xl) var(--spacing-lg) var(--spacing-sm);
+        text-align: center;
+        border-top: var(--border-width) solid var(--border-color);
+      }
+
+      .footer-content {
+        max-width: var(--max-width);
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: var(--spacing-lg);
+        margin-bottom: var(--spacing-lg);
+      }
+
+      .footer-section h3 {
+        color: var(--primary-color);
+        margin-bottom: var(--spacing-sm);
+      }
+
+      .footer-section p,
+      .footer-section a {
+        color: var(--text-muted);
+        text-decoration: none;
+        margin-bottom: var(--spacing-xs);
+        display: block;
+      }
+
+      .footer-section a:hover {
+        color: var(--primary-color);
+      }
+
+      .footer-bottom {
+        border-top: var(--border-width) solid var(--border-color);
+        padding-top: var(--spacing-lg);
+        color: var(--text-subtle);
+      }
+
+      /* Animations */
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        .nav-links {
+          display: none;
+        }
+
+        .hero h1 {
+          font-size: var(--font-xxl);
+        }
+
+        .hero p {
+          font-size: var(--font-xs);
+        }
+
+        .shows-grid,
+        .merch-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .about-us-content {
+          grid-template-columns: 1fr;
+          gap: var(--spacing-lg);
+        }
+
+        .about-us-stats {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
   </head>
   <body>
+    <header>
+      <nav>
+        <a href="#" class="logo">🎭 Metropolitan Theater</a>
+        <ul class="nav-links">
+          <li><a href="#home">Home</a></li>
+          <li><a href="#shows">Shows</a></li>
+          <li><a href="#about-us">About Us</a></li>
+          <li><a href="#merchandise">Merchandise</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+        <a href="#cart" class="cart-btn">🛒 Cart (0)</a>
+      </nav>
+    </header>
+
+    <main>
+      <section id="home" class="hero">
+        <div class="hero-content">
+          <h1>Experience Theater Like Never Before</h1>
+          <p>
+            Join us for extraordinary performances that will move your soul and
+            ignite your imagination. From classical masterpieces to contemporary
+            works, we bring stories to life.
+          </p>
+          <a href="#shows" class="cta-button">Explore Our Shows</a>
+        </div>
+      </section>
+
+      <section id="shows" class="shows">
+        <h2 class="section-title">Current & Upcoming Shows</h2>
+        <div class="shows-grid">
+          <div class="show-card">
+            <div class="show-image">🎭</div>
+            <div class="show-content">
+              <h3>Romeo & Juliet</h3>
+              <p>
+                Shakespeare's timeless tale of love and tragedy, reimagined for
+                the modern stage with stunning visuals and powerful
+                performances.
+              </p>
+              <div class="show-meta">
+                <span class="show-date">Dec 15-30, 2024</span>
+                <span class="show-price">$45-85</span>
+              </div>
+              <button class="buy-ticket-btn">Buy Tickets</button>
+            </div>
+          </div>
+
+          <div class="show-card">
+            <div class="show-image">🎪</div>
+            <div class="show-content">
+              <h3>The Phantom of the Opera</h3>
+              <p>
+                A haunting musical masterpiece that weaves mystery, romance, and
+                spectacular music into an unforgettable theatrical experience.
+              </p>
+              <div class="show-meta">
+                <span class="show-date">Jan 10-25, 2025</span>
+                <span class="show-price">$55-95</span>
+              </div>
+              <button class="buy-ticket-btn">Buy Tickets</button>
+            </div>
+          </div>
+
+          <div class="show-card">
+            <div class="show-image">🎨</div>
+            <div class="show-content">
+              <h3>A Midsummer Night's Dream</h3>
+              <p>
+                Shakespeare's magical comedy brought to life with enchanting
+                choreography, beautiful costumes, and whimsical storytelling.
+              </p>
+              <div class="show-meta">
+                <span class="show-date">Feb 5-20, 2025</span>
+                <span class="show-price">$40-75</span>
+              </div>
+              <button class="buy-ticket-btn">Buy Tickets</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="about-us" class="about-us">
+        <div class="about-us-container">
+          <div class="about-us-content">
+            <div class="about-us-text">
+              <h2>Our Story</h2>
+              <p>
+                Founded in 1974, Metropolitan Theater Company has been the
+                heartbeat of our city's cultural landscape for over five
+                decades. What began as a small community theater has grown into
+                one of the region's most respected performing arts
+                organizations.
+              </p>
+
+              <p>
+                Our mission is simple yet profound: to create transformative
+                theatrical experiences that challenge, inspire, and unite our
+                community. We believe in the power of live performance to spark
+                conversations, evoke emotions, and bridge divides between people
+                from all walks of life.
+              </p>
+
+              <p>
+                From intimate black box productions to grand mainstage
+                spectacles, we've produced over 400 shows, launched countless
+                careers, and touched the lives of more than half a million
+                audience members. Our commitment to artistic excellence,
+                educational outreach, and community engagement remains
+                unwavering.
+              </p>
+
+              <div class="about-us-stats">
+                <div class="stat-item">
+                  <span class="stat-number">50+</span>
+                  <span class="stat-label">Years of Excellence</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-number">400+</span>
+                  <span class="stat-label">Productions</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-number">500K+</span>
+                  <span class="stat-label">Audience Members</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-number">25+</span>
+                  <span class="stat-label">Awards Won</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="about-us-image">🎪</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="merchandise" class="merchandise">
+        <div class="merch-container">
+          <h2 class="section-title">Official Merchandise</h2>
+          <div class="merch-grid">
+            <div class="merch-card">
+              <div class="merch-icon">👕</div>
+              <h3>Theater T-Shirts</h3>
+              <p>
+                Premium cotton shirts featuring our iconic shows and theater
+                company logo
+              </p>
+              <div class="merch-price">$25-35</div>
+              <button class="buy-ticket-btn">Add to Cart</button>
+            </div>
+
+            <div class="merch-card">
+              <div class="merch-icon">📚</div>
+              <h3>Show Programs</h3>
+              <p>
+                Collectible programs with behind-the-scenes content and cast
+                information
+              </p>
+              <div class="merch-price">$15</div>
+              <button class="buy-ticket-btn">Add to Cart</button>
+            </div>
+
+            <div class="merch-card">
+              <div class="merch-icon">🎭</div>
+              <h3>Theater Masks</h3>
+              <p>
+                Beautiful decorative masks inspired by classical theater
+                traditions
+              </p>
+              <div class="merch-price">$45</div>
+              <button class="buy-ticket-btn">Add to Cart</button>
+            </div>
+
+            <div class="merch-card">
+              <div class="merch-icon">☕</div>
+              <h3>Coffee Mugs</h3>
+              <p>
+                Start your day with inspiration from your favorite theatrical
+                quotes
+              </p>
+              <div class="merch-price">$20</div>
+              <button class="buy-ticket-btn">Add to Cart</button>
+            </div>
+
+            <div class="merch-card">
+              <div class="merch-icon">🎵</div>
+              <h3>Soundtrack CDs</h3>
+              <p>
+                Original cast recordings and musical scores from our productions
+              </p>
+              <div class="merch-price">$18</div>
+              <button class="buy-ticket-btn">Add to Cart</button>
+            </div>
+
+            <div class="merch-card">
+              <div class="merch-icon">🖼️</div>
+              <h3>Poster Prints</h3>
+              <p>
+                High-quality prints of our show posters, perfect for any theater
+                lover's wall
+              </p>
+              <div class="merch-price">$30</div>
+              <button class="buy-ticket-btn">Add to Cart</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="about" class="about">
+        <h2 class="section-title">About Metropolitan Theater Company</h2>
+        <p>
+          For over 50 years, Metropolitan Theater Company has been at the
+          forefront of live performance arts, bringing world-class productions
+          to our community. We believe in the transformative power of theater to
+          inspire, challenge, and unite audiences from all walks of life. Our
+          mission is to create extraordinary theatrical experiences that
+          celebrate the human spirit and explore the depths of storytelling
+          through innovative productions, talented artists, and meaningful
+          community engagement.
+        </p>
+      </section>
+    </main>
+
+    <footer>
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>Contact Info</h3>
+          <p>📍 123 Theater District, Arts Quarter</p>
+          <p>📞 (555) 123-SHOW</p>
+          <p>✉️ info@metropolitantheater.com</p>
+        </div>
+        <div class="footer-section">
+          <h3>Quick Links</h3>
+          <a href="#shows">Current Shows</a>
+          <a href="#merchandise">Merchandise</a>
+          <a href="#about">About Us</a>
+          <a href="#contact">Contact</a>
+        </div>
+        <div class="footer-section">
+          <h3>Follow Us</h3>
+          <a href="#">Facebook</a>
+          <a href="#">Instagram</a>
+          <a href="#">Twitter</a>
+          <a href="#">YouTube</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2024 Metropolitan Theater Company. All rights reserved.</p>
+      </div>
+    </footer>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <script>
+      // Simple cart functionality
+      let cartCount = 0;
+      const cartBtn = document.querySelector(".cart-btn");
+      const buyButtons = document.querySelectorAll(".buy-ticket-btn");
+
+      buyButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          cartCount++;
+          cartBtn.textContent = `🛒 Cart (${cartCount})`;
+
+          // Add visual feedback
+          button.style.background = "#28a745";
+          button.textContent = "Added!";
+
+          setTimeout(() => {
+            button.style.background = "var(--gradient-primary)";
+            if (button.textContent === "Added!") {
+              button.textContent = button.closest(".show-card")
+                ? "Buy Tickets"
+                : "Add to Cart";
+            }
+          }, 1500);
+        });
+      });
+
+      // Smooth scrolling for navigation
+      document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+        anchor.addEventListener("click", function (e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute("href"));
+          if (target) {
+            target.scrollIntoView({
+              behavior: "smooth",
+              block: "start",
+            });
+          }
+        });
+      });
+    </script>
   </body>
 </html>
