@@ -1,16 +1,42 @@
 import type { ReactNode } from "react";
-import { ColorPicker, Input, InputNumber } from "antd";
+import { ColorPicker, Form, InputNumber } from "antd";
 import type { Variable } from "../../types/variables";
+import { IntegerStep } from "../../components/TokenDetails/IntegerStep";
 
-export const variableToFormInput = (variable: Variable): ReactNode => {
+const formItemWrapper = (
+  formInput: ReactNode,
+  variableName: string,
+  initialValue: string | number
+) => (
+  <Form.Item name={variableName} initialValue={initialValue} noStyle>
+    {formInput}
+  </Form.Item>
+);
+
+export const variableToFormInput = (
+  variable: Variable,
+  onChange: (name: string, value: string) => void
+): ReactNode => {
   const { value } = variable;
+
+  let formInput: ReactNode | null = null;
+
+  // Determine the type of input based on the value
   if (typeof value === "string") {
     if (value.startsWith("#") || value.startsWith("rgb")) {
-      return <ColorPicker defaultValue={value} showText size="small" />;
+      formInput = <ColorPicker showText size="small" />;
     } else {
-      return <Input defaultValue={value} />;
+      return (
+        <IntegerStep
+          defaultValue={value}
+          name={variable.name}
+          onChange={onChange}
+        />
+      );
     }
   } else if (typeof value === "number") {
-    return <InputNumber defaultValue={value} />;
+    formInput = <InputNumber />;
   }
+
+  return formItemWrapper(formInput, variable.name, value);
 };

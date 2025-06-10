@@ -1,9 +1,11 @@
 import _ from "lodash";
 import { type ReactNode, useEffect, useState } from "react";
-import { Button, Typography } from "antd";
+import { Button, Flex, Form, Typography } from "antd";
 import { variablesUsedByElement } from "../../utils/variable-parsing/findVariablesUsedByElement";
 import { transformVariableToReact } from "../../utils/variable-parsing/transformVariableToReact";
 import "./TokenDetails.scss";
+import { changeVariableValue } from "../../utils/variable-updates/changeVariableValue";
+import type { Color } from "antd/es/color-picker";
 
 const { Text } = Typography;
 
@@ -11,53 +13,106 @@ export const TokenDetails = () => {
   const [target, setTarget] = useState<HTMLElement | null>(null);
   const [frozen, setFrozen] = useState(false); // State to manage if the target is frozen
   const [editable, setEditable] = useState(false); // State to manage if the variable values should be editable
+  const [tokenEditingForm] = Form.useForm();
 
-  const saveVariableValues = () => {
+  const onValuesChange = (values: Record<string, string | Color>) => {
+    for (const [key, value] of Object.entries(values)) {
+      if (typeof value === "object") {
+        if ("toCssString" in value) {
+          // If the value is a ColorPicker, convert it to a CSS string
+          changeVariableValue(key, value.toCssString());
+          continue;
+        }
+      }
+      changeVariableValue(key, value);
+    }
+  };
+
+  const onFinish = () => {
     setEditable(false);
+    setFrozen(false);
   };
 
   const targetTokenDetails = (target: HTMLElement | null): ReactNode => {
-    if (target) {
-      try {
-        const elementName = target.tagName;
-        const elementVariables = variablesUsedByElement(target);
-        return (
-          <>
-            <Text strong>{_.lowerCase(elementName)}</Text>
-            <br />
-            <br />
-            {elementVariables.map((variable) =>
-              transformVariableToReact(variable, editable)
-            )}
-            <br />
-            <Button
-              onClick={() =>
-                editable ? saveVariableValues() : setEditable(true)
-              }
-              type="primary"
-              size="small"
-            >
-              {editable ? "Save" : "Edit"}
-            </Button>
-            <br />
-            <br />
-            <Button
-              onClick={() => setFrozen(false)}
-              color="cyan"
-              variant="solid"
-              size="small"
-            >
-              Unfreeze
-            </Button>
-          </>
-        );
-      } catch (e) {
-        console.log(e);
-      }
-    } else {
+    if (!target) {
       return <h4>No target selected </h4>;
     }
+
+    try {
+      const elementName = target.tagName;
+      const elementVariables = variablesUsedByElement(target);
+      return (
+        <>
+          <Text strong>{_.lowerCase(elementName)}</Text>
+          <br />
+          <br />
+          <Form
+            form={tokenEditingForm}
+            name="variableValues"
+            onValuesChange={onValuesChange}
+            onFinish={onFinish}
+          >
+            {elementVariables.map((variable) =>
+              transformVariableToReact(
+                variable,
+                editable,
+                (name: string, value: string) => {
+                  changeVariableValue(name, value);
+                }
+              )
+            )}
+            <br />
+            <Flex gap={8}>
+              {editable ? (
+                <Form.Item noStyle>
+                  <Button type="primary" size="small" htmlType="submit">
+                    Save
+                  </Button>
+                </Form.Item>
+              ) : null}
+              {editable ? null : (
+                <Button
+                  onClick={() => setEditable(true)}
+                  type="primary"
+                  size="small"
+                >
+                  Edit
+                </Button>
+              )}
+              {frozen ? (
+                <>
+                  <br />
+                  <Button
+                    id="unfreeze-button"
+                    onClick={() => {
+                      setFrozen(false);
+                    }}
+                    color="cyan"
+                    variant="solid"
+                    size="small"
+                  >
+                    Unfreeze
+                  </Button>
+                </>
+              ) : null}
+            </Flex>
+          </Form>
+        </>
+      );
+    } catch (e) {
+      console.log(e);
+    }
   };
+
+  useEffect(() => {
+    if (target) {
+      if (frozen) {
+        target.classList.add("token-details__selected-target--frozen");
+      } else {
+        target.classList.remove("token-details__selected-target--frozen");
+      }
+    }
+  }, [target, frozen]);
 
   useEffect(() => {
     const interceptClick = (event: MouseEvent) => {
@@ -65,14 +120,26 @@ export const TokenDetails = () => {
         return;
       }
 
-      if (event.target.matches(".tokenInspector *")) {
-        console.log("Click on token inspector, NOT freezing target");
+      if (
+        event.target.matches(".tokenInspector *") ||
+        event.target.matches("#unfreeze-button *")
+      ) {
         // If the click is not on the token inspector, do not freeze
         return;
       }
 
       event.preventDefault();
       event.stopPropagation();
+
+      if (frozen) {
+        if (event.target.matches(".token-details__selected-target")) {
+          // If the click is on the selected target, unfreeze it
+          setFrozen(false);
+          return;
+        }
+        // If the target is currently frozen, do not change anything
+        return;
+      }
 
       setFrozen(true);
     };
@@ -99,7 +166,6 @@ export const TokenDetails = () => {
               el.classList.remove("token-details__selected-target");
             }
           });
-        console.log("Changing target!");
         setTarget(newTarget);
       }
     };
