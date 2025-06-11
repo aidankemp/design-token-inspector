@@ -1,6 +1,6 @@
 {
   "name": "design-token-inspector",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "UI components built for inspecting design tokens in a live application",
   "keywords": [
     "design-tokens",
