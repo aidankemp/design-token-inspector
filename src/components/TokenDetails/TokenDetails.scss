@@ -4,11 +4,28 @@
     cursor: pointer;
 
     &--frozen {
-      border-color: green;
+      border-color: green !important;
+
+      &:hover {
+        border-color: rgb(0, 255, 0) !important;
+      }
     }
   }
 }
 
 .ant-color-picker {
   z-index: 100000;
+}
+
+.frozen-indicator {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none; /* This is the key! */
+  z-index: 9999;
+
+  /* Create the border using box-shadow */
+  box-shadow: inset 0 0 0 10px rgba(0, 128, 0);
 }

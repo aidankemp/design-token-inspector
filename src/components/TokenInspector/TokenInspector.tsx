@@ -7,12 +7,14 @@ import {
 import {
   Button,
   Col,
+  Flex,
   type NotificationArgsProps,
   Row,
   notification,
 } from "antd";
 import { useEffect, useState } from "react";
 import { TokenDetails } from "../TokenDetails";
+import { StyleDictionaryImporter } from "./StyleDictionaryImporter";
 
 export const TokenInspector = ({ onClose }: { onClose: () => void }) => {
   const [api, contextHolder] = notification.useNotification();
@@ -29,9 +31,16 @@ export const TokenInspector = ({ onClose }: { onClose: () => void }) => {
               ? "bottom"
               : "top"
           }
+          style={{
+            maxHeight: "80vh",
+            overflow: "scroll",
+          }}
         >
           <Col span={22}>
-            <TokenDetails />
+            <Flex gap={8} vertical>
+              <TokenDetails />
+              <StyleDictionaryImporter />
+            </Flex>
           </Col>
           <Col span={2} style={{ paddingTop: "2rem" }}>
             <Button

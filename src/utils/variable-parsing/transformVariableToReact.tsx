@@ -28,7 +28,6 @@ export const transformVariableToReact = (
           <code>{variable.value}</code> {usedIn}
         </>
       )}
-      <br />
     </div>
   );
 };

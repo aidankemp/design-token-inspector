@@ -6,6 +6,7 @@ import { transformVariableToReact } from "../../utils/variable-parsing/transform
 import "./TokenDetails.scss";
 import { changeVariableValue } from "../../utils/variable-updates/changeVariableValue";
 import type { Color } from "antd/es/color-picker";
+import { createPortal } from "react-dom";
 
 const { Text } = Typography;
 
@@ -44,13 +45,16 @@ export const TokenDetails = () => {
       return (
         <>
           <Text strong>{_.lowerCase(elementName)}</Text>
-          <br />
-          <br />
           <Form
             form={tokenEditingForm}
             name="variableValues"
             onValuesChange={onValuesChange}
             onFinish={onFinish}
+            style={
+              editable
+                ? { display: "flex", flexDirection: "column", gap: "2px" }
+                : {}
+            }
           >
             {elementVariables.map((variable) =>
               transformVariableToReact(
@@ -65,38 +69,21 @@ export const TokenDetails = () => {
             <Flex gap={8}>
               {editable ? (
                 <Form.Item noStyle>
-                  <Button type="primary" size="small" htmlType="submit">
+                  <Button
+                    color="cyan"
+                    variant="solid"
+                    size="small"
+                    htmlType="submit"
+                  >
                     Save
                   </Button>
                 </Form.Item>
               ) : null}
-              {editable ? null : (
-                <Button
-                  onClick={() => setEditable(true)}
-                  type="primary"
-                  size="small"
-                >
-                  Edit
-                </Button>
-              )}
-              {frozen ? (
-                <>
-                  <br />
-                  <Button
-                    id="unfreeze-button"
-                    onClick={() => {
-                      setFrozen(false);
-                    }}
-                    color="cyan"
-                    variant="solid"
-                    size="small"
-                  >
-                    Unfreeze
-                  </Button>
-                </>
-              ) : null}
             </Flex>
           </Form>
+          {frozen
+            ? createPortal(<div className="frozen-indicator" />, document.body)
+            : null}
         </>
       );
     } catch (e) {
@@ -135,6 +122,7 @@ export const TokenDetails = () => {
         if (event.target.matches(".token-details__selected-target")) {
           // If the click is on the selected target, unfreeze it
           setFrozen(false);
+          onFinish();
           return;
         }
         // If the target is currently frozen, do not change anything
@@ -142,6 +130,7 @@ export const TokenDetails = () => {
       }
 
       setFrozen(true);
+      setEditable(true);
     };
 
     const changeTarget = (
