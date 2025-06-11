@@ -1,6 +1,7 @@
 import { Button, Flex, Input } from "antd";
 import { useState } from "react";
 import { parseStyleDictionary } from "../../utils/style-dictionary-parsing/parseStyleDictionary";
+import { applyParsedSDToDocument } from "../../utils/style-dictionary-parsing/applyParsedSDToDocument";
 
 const { TextArea } = Input;
 
@@ -16,10 +17,8 @@ export const StyleDictionaryImporter = () => {
       const tokensAsCssString = formattedTokens[0].output as string;
       console.log("Tokens created:", tokensAsCssString);
 
-      // Apply the CSS string to the document
-      const styleElement = document.createElement("style");
-      styleElement.textContent = tokensAsCssString;
-      document.head.appendChild(styleElement);
+      // Apply the tokens to the document
+      applyParsedSDToDocument(tokensAsCssString);
       console.log("Tokens applied to the document.");
     } catch (error) {
       console.error("Invalid JSON format:", error);

@@ -14,9 +14,19 @@ import {
 } from "antd";
 import { useEffect, useState } from "react";
 import { TokenDetails } from "../TokenDetails";
+import { parseStyleDictionaryFromFile } from "../../utils/style-dictionary-parsing/parseStyleDictionary";
 import { StyleDictionaryImporter } from "./StyleDictionaryImporter";
+import { applyParsedSDToDocument } from "../../utils/style-dictionary-parsing/applyParsedSDToDocument";
 
-export const TokenInspector = ({ onClose }: { onClose: () => void }) => {
+export const TokenInspector = ({
+  onClose,
+  tokenFile,
+  hide = false,
+}: {
+  onClose: () => void;
+  tokenFile?: string;
+  hide?: boolean;
+}) => {
   const [api, contextHolder] = notification.useNotification();
   const [location, setLocation] =
     useState<NotificationArgsProps["placement"]>("bottomRight");
@@ -92,7 +102,20 @@ export const TokenInspector = ({ onClose }: { onClose: () => void }) => {
   };
 
   useEffect(() => {
-    openNotification(location);
+    if (!hide) {
+      openNotification(location);
+    }
+
+    if (tokenFile) {
+      parseStyleDictionaryFromFile(tokenFile).then((tokens) => {
+        console.log("Parsed tokens:", tokens);
+        if (tokens) {
+          applyParsedSDToDocument(tokens[0].output as string);
+        } else {
+          console.error("Failed to parse Style Dictionary tokens.");
+        }
+      });
+    }
   }, []);
 
   return contextHolder;
